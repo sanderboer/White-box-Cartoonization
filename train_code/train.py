@@ -47,15 +47,16 @@ def train(args):
     input_cartoon = tf.placeholder(tf.float32, [args.batch_size, 
                                 args.patch_size, args.patch_size, 3])
     
-    output = network.unet_generator(input_photo)
+    output = network.unet_generator(input_photo)        # 生成器的输出结果
     output = guided_filter(input_photo, output, r=1)
 
-    
-    blur_fake = guided_filter(output, output, r=5, eps=2e-1)
+            
+    blur_fake = guided_filter(output, output, r=5, eps=2e-1)        #应该是surface对应的输出结果？
     blur_cartoon = guided_filter(input_cartoon, input_cartoon, r=5, eps=2e-1)
 
-    gray_fake, gray_cartoon = utils.color_shift(output, input_cartoon)
+    gray_fake, gray_cartoon = utils.color_shift(output, input_cartoon)  # 纹理表征的输出
     
+    # 使用生成对抗网络损失函数的部分只有纹理表征以及表面特性的表征
     d_loss_gray, g_loss_gray = loss.lsgan_loss(network.disc_sn, gray_cartoon, gray_fake, 
                                              scale=1, patch=True, name='disc_gray')
     d_loss_blur, g_loss_blur = loss.lsgan_loss(network.disc_sn, blur_cartoon, blur_fake, 
