@@ -1,0 +1,14 @@
+name: tensor
+
+channels:
+  - dlr-sc
+  - conda-forge
+  - default
+
+dependencies:
+  - tensorflow==1.12
+  - joblib
+  - pip
+  - pip:
+    - scikit-image==0.14.5
+
